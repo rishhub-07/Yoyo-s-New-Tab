@@ -10,7 +10,6 @@ It provides **time, weather, tasks, and quick AI access** in a clean minimal int
 
 ## 🖼 Preview
 
-![Dashboard Preview]
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/cbb5c1e0-5748-48a6-a034-318fe0a407c0" />
 
 
