@@ -1,5 +1,5 @@
 
-# 🌌 Smart Dashboard – Custom Chrome New Tab
+# 🌌 Yoyo's Chrome New Tab
 
 A **modern customizable new tab dashboard** designed for productivity and quick access to tools.  
 This dashboard replaces the default browser tab with a **beautiful UI, useful widgets, and quick AI access**.
