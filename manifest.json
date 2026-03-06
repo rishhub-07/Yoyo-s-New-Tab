@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Yoyo's New Tab",
+  "version": "1.0",
+  "description": "A clean minimal new tab page.",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "permissions": [
+    "storage"
+  ]
+}
