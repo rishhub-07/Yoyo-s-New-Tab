@@ -164,14 +164,37 @@ function hideActions() {
   searchActionsEl.classList.remove('visible');
 }
 
+let isSearching = false;
+
 function doSearch() {
+  if (isSearching) return;
   const q = $('searchInput').value.trim();
   if (!q) return;
-  if (actionsVisible) {
-    window.location.href = SEARCH_ACTIONS[actionSelectedIdx].url(q);
-  } else {
-    window.location.href = SEARCH_URL(encodeURIComponent(q));
-  }
+
+  // Capture target before hiding actions
+  const targetUrl = actionsVisible ? SEARCH_ACTIONS[actionSelectedIdx].url(q) : SEARCH_URL(encodeURIComponent(q));
+
+  isSearching = true;
+  hideActions(); // ensure dropdown is closed during animation
+
+  // Trigger Spotlight UI Animation
+  document.body.classList.add('search-active');
+
+  // Fade out screen before redirect (T=350ms)
+  setTimeout(() => {
+    document.body.classList.add('search-fade-out');
+  }, 350);
+
+  // Execute Redirect (T=500ms)
+  setTimeout(() => {
+    window.location.href = targetUrl;
+
+    // Safety fallback in case navigation stops or user presses back
+    setTimeout(() => {
+      isSearching = false;
+      document.body.classList.remove('search-active', 'search-fade-out');
+    }, 1000);
+  }, 500);
 }
 
 // Input listener — show/hide actions
@@ -329,7 +352,7 @@ function addTodo() {
 todoInput.addEventListener('keydown', ev => { if (ev.key === 'Enter') addTodo(); });
 
 // ─── Theme & Background ──────────────────────────────
-let currentBgMode = 'static'; // static | aurora | blobs | particles
+let currentBgMode = 'static'; // static | aurora | particles
 let particleAnimId = null;
 
 function setTheme(t) {
@@ -372,9 +395,9 @@ function getTimePeriod() {
 // Map time periods to animation types
 const TIME_BG_MAP = {
   morning: 'aurora',     // soft warm pastels
-  afternoon: 'blobs',      // energetic floating blobs
+  afternoon: 'particles',  // clear afternoon (fallback)
   evening: 'aurora',     // sunset gradient
-  night: 'particles',  // calm starfield
+  night: 'particles',    // calm starfield
 };
 
 // Particle hue ranges per time period
@@ -408,9 +431,7 @@ function applyAutoBg() {
 
   body.classList.add(`bg-mode-${animType}`);
 
-  if (animType === 'blobs') {
-    body.style.background = '#080818';
-  } else if (animType === 'particles') {
+  if (animType === 'particles') {
     body.style.background = '#060612';
     // Set particle hues to match the time period
     const hueRange = TIME_PARTICLE_HUE[period];
@@ -849,8 +870,9 @@ function setBgBrightness(val) {
 }
 
 // ─── Weather (Open-Meteo API — free, no key) ────────
-const WEATHER_LAT = 30.5073;  // SLIET Longowal, Punjab
-const WEATHER_LON = 75.7972;
+let weatherLat = 30.5073;  // SLIET Longowal, Punjab
+let weatherLon = 75.7972;
+let weatherLocName = 'SLIET, Longowal';
 
 const WMO_CODES = {
   0: ['☀️', 'Clear sky'],
@@ -878,7 +900,7 @@ const WMO_CODES = {
 
 async function fetchWeather() {
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${WEATHER_LAT}&longitude=${WEATHER_LON}&current=temperature_2m,weather_code,wind_speed_10m&timezone=Asia%2FKolkata`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${weatherLat}&longitude=${weatherLon}&current=temperature_2m,weather_code,wind_speed_10m&timezone=Asia%2FKolkata`;
     const res = await fetch(url);
     const data = await res.json();
     const cur = data.current;
@@ -906,7 +928,7 @@ $('weatherEyeBtn').addEventListener('click', () => {
   const locEl = $('weatherLoc');
   locEl.classList.add('switching');
   setTimeout(() => {
-    locEl.textContent = locHidden ? '🌍 Earth' : 'SLIET, Longowal';
+    locEl.textContent = locHidden ? '🌍 Earth' : weatherLocName;
     locEl.classList.remove('switching');
   }, 350);
   save({ weatherLocHidden: locHidden });
@@ -980,6 +1002,42 @@ $('addLinkBtn').addEventListener('click', addQuickLink);
 $('editSaveBtn').addEventListener('click', exitEditMode);
 $('searchGoBtn').addEventListener('click', doSearch);
 $('todoAddBtn').addEventListener('click', addTodo);
+$('updateWeatherLocBtn').addEventListener('click', async () => {
+  const latTgt = parseFloat($('sWeatherLat').value);
+  const lonTgt = parseFloat($('sWeatherLon').value);
+  if (isNaN(latTgt) || isNaN(lonTgt)) return;
+
+  const btn = $('updateWeatherLocBtn');
+  btn.textContent = 'Updating...';
+
+  try {
+    const revUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latTgt}&longitude=${lonTgt}&localityLanguage=en`;
+    const revRes = await fetch(revUrl);
+    const revData = await revRes.json();
+    let newLocName = revData.locality || revData.city || revData.principalSubdivision || 'Unknown Location';
+    if (revData.countryCode && newLocName !== 'Unknown Location') {
+      newLocName += `, ${revData.countryCode}`;
+    }
+
+    weatherLat = latTgt;
+    weatherLon = lonTgt;
+    weatherLocName = newLocName;
+
+    save({ weatherLat, weatherLon, weatherLocName });
+
+    if (!locHidden) {
+      $('weatherLoc').textContent = weatherLocName;
+    }
+    fetchWeather();
+
+    btn.textContent = 'Updated!';
+    setTimeout(() => { btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg> Update Location`; }, 2000);
+  } catch (e) {
+    console.warn('[Weather] reverse geocode failed:', e);
+    btn.textContent = 'Error';
+    setTimeout(() => { btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg> Update Location`; }, 2000);
+  }
+});
 
 // Background type selector
 document.querySelectorAll('.s-bg-type').forEach(btn => {
@@ -1397,7 +1455,8 @@ chrome.storage.local.get(
     'customBgData', 'customBgType', 'bgMode',
     'wpCategory', 'currentWallpaperURL',
     'ambientSound', 'ambientVolume',
-    'backgroundBlur', 'backgroundBrightness', 'weatherLocHidden'],
+    'backgroundBlur', 'backgroundBrightness', 'weatherLocHidden',
+    'weatherLat', 'weatherLon', 'weatherLocName'],
   res => {
     todos = res.todos || [];
     quickLinks = res.quickLinks || DEFAULT_LINKS;
@@ -1418,7 +1477,23 @@ chrome.storage.local.get(
       setBg(res.bg || 'cosmos');
       if (res.bg === 'custom' && res.customBgData) {
         if (res.customBgType === 'video') {
-          applyCustomVideo(res.customBgData);
+          // Convert base64 dataUrl back to a Blob to recreate a valid object URL for the <video> src
+          try {
+            const byteString = atob(res.customBgData.split(',')[1]);
+            const mimeString = res.customBgData.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+              ia[i] = byteString.charCodeAt(i);
+            }
+            const blob = new Blob([ab], { type: mimeString });
+            const blobUrl = URL.createObjectURL(blob);
+            applyCustomVideo(blobUrl);
+          } catch (e) {
+            console.error('[Background] Failed to restore video blob', e);
+            // Fallback attempt to play base64 directly
+            applyCustomVideo(res.customBgData);
+          }
         } else {
           applyCustomBg(res.customBgData);
         }
@@ -1470,6 +1545,24 @@ chrome.storage.local.get(
     if (res.weatherLocHidden) {
       locHidden = true;
       $('weatherLoc').textContent = '🌍 Earth';
+    } else {
+      $('weatherLoc').textContent = weatherLocName;
+    }
+
+    if (res.weatherLat !== undefined) weatherLat = res.weatherLat;
+    if (res.weatherLon !== undefined) weatherLon = res.weatherLon;
+    if (res.weatherLocName !== undefined) weatherLocName = res.weatherLocName;
+
+    // Set settings UI values
+    const sWeatherLatEl = $('sWeatherLat');
+    const sWeatherLonEl = $('sWeatherLon');
+    if (sWeatherLatEl) sWeatherLatEl.value = weatherLat;
+    if (sWeatherLonEl) sWeatherLonEl.value = weatherLon;
+
+    // Update display if not hidden
+    if (!locHidden) {
+      const wLoc = $('weatherLoc');
+      if (wLoc) wLoc.textContent = weatherLocName;
     }
 
     // Reveal page
@@ -1497,7 +1590,7 @@ function initInteractions() {
   document.addEventListener('mousemove', e => {
     mouseX = e.clientX;
     mouseY = e.clientY;
-    
+
     // Show glow on first move
     if (!glowActive && cursorGlow) {
       glowActive = true;
@@ -1538,17 +1631,17 @@ function initInteractions() {
         widget.style.transform = '';
         return;
       }
-      
+
       const rect = widget.getBoundingClientRect();
       const hw = rect.width / 2;
       const hh = rect.height / 2;
       const cx = rect.left + hw;
       const cy = rect.top + hh;
-      
+
       // Offset -1 to 1
       const dx = (e.clientX - cx) / hw;
       const dy = (e.clientY - cy) / hh;
-      
+
       // Move widget subtly (max 8px)
       widget.style.transform = `translate(${dx * 8}px, ${dy * 8}px) scale(1.02)`;
     });

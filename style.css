@@ -146,7 +146,6 @@ body::before {
 }
 
 body.bg-mode-aurora .bg-overlay,
-body.bg-mode-blobs .bg-overlay,
 body.bg-mode-particles .bg-overlay,
 body.bg-mode-wallpaper .bg-overlay {
   opacity: 1;
@@ -240,235 +239,6 @@ body.time-night .bg-aurora-anim {
       #0d0d2b 0%, #1a0a3e 12%, #2d1b69 25%,
       #0f4c75 38%, #3282b8 50%, #0d7377 62%,
       #14274e 75%, #394867 88%, #0d0d2b 100%);
-}
-
-/* --- Time-period blob color overrides --- */
-body.time-morning .blob-1 {
-  background: radial-gradient(circle, #f9a8d4 0%, transparent 70%);
-}
-
-body.time-morning .blob-2 {
-  background: radial-gradient(circle, #93c5fd 0%, transparent 70%);
-}
-
-body.time-morning .blob-3 {
-  background: radial-gradient(circle, #fde68a 0%, transparent 70%);
-}
-
-body.time-morning .blob-4 {
-  background: radial-gradient(circle, #c4b5fd 0%, transparent 70%);
-}
-
-body.time-morning .blob-5 {
-  background: radial-gradient(circle, #a7f3d0 0%, transparent 70%);
-}
-
-body.time-afternoon .blob-1 {
-  background: radial-gradient(circle, #818cf8 0%, transparent 70%);
-}
-
-body.time-afternoon .blob-2 {
-  background: radial-gradient(circle, #34d399 0%, transparent 70%);
-}
-
-body.time-afternoon .blob-3 {
-  background: radial-gradient(circle, #38bdf8 0%, transparent 70%);
-}
-
-body.time-afternoon .blob-4 {
-  background: radial-gradient(circle, #f472b6 0%, transparent 70%);
-}
-
-body.time-afternoon .blob-5 {
-  background: radial-gradient(circle, #fbbf24 0%, transparent 70%);
-}
-
-body.time-evening .blob-1 {
-  background: radial-gradient(circle, #f97316 0%, transparent 70%);
-}
-
-body.time-evening .blob-2 {
-  background: radial-gradient(circle, #c026d3 0%, transparent 70%);
-}
-
-body.time-evening .blob-3 {
-  background: radial-gradient(circle, #e11d48 0%, transparent 70%);
-}
-
-body.time-evening .blob-4 {
-  background: radial-gradient(circle, #8b5cf6 0%, transparent 70%);
-}
-
-body.time-evening .blob-5 {
-  background: radial-gradient(circle, #fb923c 0%, transparent 70%);
-}
-
-body.time-night .blob-1 {
-  background: radial-gradient(circle, #6c3ce0 0%, transparent 70%);
-}
-
-body.time-night .blob-2 {
-  background: radial-gradient(circle, #0ea5e9 0%, transparent 70%);
-}
-
-body.time-night .blob-3 {
-  background: radial-gradient(circle, #312e81 0%, transparent 70%);
-}
-
-body.time-night .blob-4 {
-  background: radial-gradient(circle, #164e63 0%, transparent 70%);
-}
-
-body.time-night .blob-5 {
-  background: radial-gradient(circle, #1e1b4b 0%, transparent 70%);
-}
-
-/* --- Blob backgrounds --- */
-.bg-blobs {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-body.bg-mode-blobs .bg-blobs {
-  display: block;
-}
-
-body.bg-mode-blobs {
-  background: #080818 !important;
-}
-
-.blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.55;
-  will-change: transform;
-}
-
-.blob-1 {
-  width: 420px;
-  height: 420px;
-  background: radial-gradient(circle, #6c3ce0 0%, transparent 70%);
-  top: 10%;
-  left: 15%;
-  animation: blobDrift1 22s ease-in-out infinite;
-}
-
-.blob-2 {
-  width: 350px;
-  height: 350px;
-  background: radial-gradient(circle, #0ea5e9 0%, transparent 70%);
-  top: 50%;
-  right: 10%;
-  animation: blobDrift2 26s ease-in-out infinite;
-}
-
-.blob-3 {
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, #f97316 0%, transparent 70%);
-  bottom: 15%;
-  left: 35%;
-  animation: blobDrift3 20s ease-in-out infinite;
-}
-
-.blob-4 {
-  width: 280px;
-  height: 280px;
-  background: radial-gradient(circle, #ec4899 0%, transparent 70%);
-  top: 25%;
-  right: 35%;
-  animation: blobDrift4 24s ease-in-out infinite;
-}
-
-.blob-5 {
-  width: 260px;
-  height: 260px;
-  background: radial-gradient(circle, #22d3ee 0%, transparent 70%);
-  bottom: 30%;
-  left: 10%;
-  animation: blobDrift5 28s ease-in-out infinite;
-}
-
-@keyframes blobDrift1 {
-
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-
-  33% {
-    transform: translate(80px, -60px) scale(1.1);
-  }
-
-  66% {
-    transform: translate(-40px, 50px) scale(0.95);
-  }
-}
-
-@keyframes blobDrift2 {
-
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-
-  33% {
-    transform: translate(-70px, 40px) scale(1.05);
-  }
-
-  66% {
-    transform: translate(50px, -80px) scale(0.9);
-  }
-}
-
-@keyframes blobDrift3 {
-
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-
-  33% {
-    transform: translate(60px, 50px) scale(1.08);
-  }
-
-  66% {
-    transform: translate(-50px, -40px) scale(0.92);
-  }
-}
-
-@keyframes blobDrift4 {
-
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-
-  33% {
-    transform: translate(-90px, 30px) scale(1.12);
-  }
-
-  66% {
-    transform: translate(40px, -60px) scale(0.88);
-  }
-}
-
-@keyframes blobDrift5 {
-
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-
-  33% {
-    transform: translate(50px, -70px) scale(1.06);
-  }
-
-  66% {
-    transform: translate(-30px, 60px) scale(0.94);
-  }
 }
 
 /* --- Particles canvas --- */
@@ -1692,6 +1462,57 @@ body.edit-mode .widget.resizing {
   text-overflow: ellipsis;
   white-space: nowrap;
   font-style: italic;
+}
+
+/* =====================================================
+   CINEMATIC SPOTLIGHT SEARCH TRANSITION
+   ===================================================== */
+
+body.search-active #bgLayer {
+  filter: blur(14px) brightness(0.5);
+  transition: filter 0.35s ease;
+}
+
+body.search-active #bgOverlay {
+  animation: bgFlash 0.5s ease-out forwards;
+}
+
+@keyframes bgFlash {
+  0% { background: rgba(255, 255, 255, 0); }
+  10% { background: rgba(255, 255, 255, 0.15); }
+  100% { background: rgba(0, 0, 0, 0.5); }
+}
+
+body.search-active .widget:not(#w-search),
+body.search-active .dock,
+body.search-active .ai-toggles,
+body.search-active .floating-refresh-btn,
+body.search-active .settings-btn {
+  opacity: 0.2 !important;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+body.search-active #w-search {
+  transform: scale(1.1) translateY(-10px) perspective(1000px) rotateX(2deg) !important;
+  box-shadow: 0 15px 50px rgba(120, 180, 255, 0.6), 0 0 100px rgba(0, 255, 255, 0.2), var(--glass-shadow) !important;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease-out !important;
+  z-index: 100 !important;
+}
+
+body.search-active #w-search .search-box {
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+body.search-active #w-search .search-icon-svg,
+body.search-active #w-search .search-go {
+  opacity: 0.2;
+  transition: opacity 0.3s ease;
+}
+
+body.search-fade-out {
+  opacity: 0;
+  transition: opacity 0.15s ease;
 }
 
 @container (max-width: 300px) {
